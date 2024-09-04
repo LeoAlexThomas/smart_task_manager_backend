@@ -1,5 +1,6 @@
 const lodash = require("lodash");
 const asyncHandler = require("express-async-handler");
+const Task = require("../models/taskModal");
 
 // NOTE: Adding asyncHandler to handle try/catch method and if exception is thrown it will be caught and handled in error handler we added in index.js file
 
@@ -7,16 +8,22 @@ const asyncHandler = require("express-async-handler");
 //@route GET /api/getTasks
 //@access public
 const getTasks = asyncHandler(async (req, res) => {
-  res.status(200).json({ success: true, message: "Tasks loaded successfully" });
+  const tasks = await Task.find();
+  res.status(200).json({ isSuccess: true, data: tasks });
 });
 
 //@desc Get Specific task by id
 //@route GET /api/getTask/:id
 //@access public
 const getTask = asyncHandler(async (req, res) => {
+  const task = await Task.findById(req.params.id);
+  if (!task) {
+    res.status(404);
+    throw new Error("Task not found");
+  }
   res.status(200).json({
-    success: true,
-    message: `Task loaded successfully: ${req.params.id}`,
+    isSuccess: true,
+    data: task,
   });
 });
 
@@ -24,21 +31,37 @@ const getTask = asyncHandler(async (req, res) => {
 //@route POST /api/createTask/
 //@access public
 const createTask = asyncHandler(async (req, res) => {
-  console.log("Request Body: ", req.body);
   if (lodash.isEmpty(req.body)) {
     res.status(400);
     throw new Error("All fields are required");
   }
-  res.status(201).json({ success: true, message: "Task created successfully" });
+  const newTask = await Task.create(req.body);
+
+  res.status(201).json({
+    isSuccess: true,
+    message: "Task created successfully",
+    data: newTask,
+  });
 });
 
 //@desc Update specific task by id
 //@route PUT /api/updateTask/:id
 //@access public
 const updateTask = asyncHandler(async (req, res) => {
+  const task = await Task.findById(req.params.id);
+  if (!task) {
+    res.status(404);
+    throw new Error("Task not found");
+  }
+
+  const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+
   res.status(201).json({
     success: true,
-    message: `Task updated successfully: ${req.params.id}`,
+    message: `Task updated successfully`,
+    data: updatedTask,
   });
 });
 
@@ -46,10 +69,10 @@ const updateTask = asyncHandler(async (req, res) => {
 //@route DELETE /api/deleteTask/:id
 //@access public
 const deleteTask = asyncHandler(async (req, res) => {
-  res.status(201).json({
-    success: true,
-    message: `Task delete successfully: ${req.params.id}`,
-  });
+  const deletedTask = await Task.findByIdAndDelete(req.params.id);
+  res
+    .status(201)
+    .json({ isSuccess: true, message: `Task deleted successfully` });
 });
 
 module.exports = { getTasks, getTask, createTask, updateTask, deleteTask };
