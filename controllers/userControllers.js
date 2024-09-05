@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModal");
 const lodash = require("lodash");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 // NOTE: Adding asyncHandler to handle try/catch method and if exception is thrown it will be caught and handled in error handler we added in index.js file
 
@@ -30,7 +31,12 @@ const registerUser = asyncHandler(async (req, res) => {
   const createdUser = await User.create({
     userName,
     email,
-    password: hashedPassword,
+    password: hashedPassword, // NOTE: Storing  hashed password instead of storing real password due user security issues
+  });
+
+  const accessToken = await getAccessToken({
+    userId: createdUser.id,
+    userEmail: createdUser.email,
   });
 
   res.status(200).json({
@@ -39,10 +45,16 @@ const registerUser = asyncHandler(async (req, res) => {
     data: {
       userName: createdUser.userName,
       email: createdUser.email,
-      id: createdUser.id,
+      accessToken,
     },
   });
 });
+
+const getAccessToken = async (payload) => {
+  return await jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET_KEY, {
+    expiresIn: "1d",
+  });
+};
 
 //@desc login user
 //@route POST /api/user/login
@@ -54,14 +66,36 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("All Fields are required");
   }
 
-  res.status(200).json({ isSuccess: true, message: "Logged in successfully" });
+  const user = await User.findOne({ email });
+  if (lodash.isNil(user) || !(await bcrypt.compare(password, user.password))) {
+    res.status(401);
+    throw new Error("Email / password is incorrect");
+  }
+
+  const accessToken = await getAccessToken({
+    userId: user.id,
+    userEmail: user.email,
+  });
+  res.status(200).json({
+    isSuccess: true,
+    message: "Logged in successfully",
+    data: {
+      accessToken,
+    },
+  });
 });
 
 //@desc Get current user
 //@route GET /api/user/current
 //@access private
 const getCurrentUser = asyncHandler(async (req, res) => {
-  res.status(200).json({ isSuccess: true, message: "Logged in successfully" });
+  res.status(200).json({
+    isSuccess: true,
+    data: {
+      userName: req.user.userName,
+      userEmail: req.user.email,
+    },
+  });
 });
 
 module.exports = { registerUser, loginUser, getCurrentUser };
