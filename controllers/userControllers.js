@@ -1,6 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModal");
 const lodash = require("lodash");
+const bcrypt = require("bcrypt");
+
 // NOTE: Adding asyncHandler to handle try/catch method and if exception is thrown it will be caught and handled in error handler we added in index.js file
 
 //@desc Register new user
@@ -23,7 +25,23 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("This email is already registered");
   }
 
-  res.status(200).json({ isSuccess: true, message: "Registered successfully" });
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const createdUser = await User.create({
+    userName,
+    email,
+    password: hashedPassword,
+  });
+
+  res.status(200).json({
+    isSuccess: true,
+    message: "Registered successfully",
+    data: {
+      userName: createdUser.userName,
+      email: createdUser.email,
+      id: createdUser.id,
+    },
+  });
 });
 
 //@desc login user
