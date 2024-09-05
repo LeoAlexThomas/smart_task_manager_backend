@@ -4,7 +4,7 @@ const {
   getCurrentUser,
   registerUser,
   loginUser,
-} = require("../controllers/taskControllers");
+} = require("../controllers/userControllers");
 
 // 'router.route' => used to add route for our application api
 router.route("/user/register").post(registerUser);
