@@ -15,6 +15,7 @@ const port = process.env.PORT || 3002;
 app.use(express.json());
 // To add api routes for our application
 app.use("/api", require("./routes/taskRoutes"));
+app.use("/api", require("./routes/userRoutes"));
 // To add error handlers for structured error messages
 app.use(errorHandler);
 
