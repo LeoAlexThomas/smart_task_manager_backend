@@ -8,22 +8,22 @@ const Task = require("../models/taskModal");
 //@access private
 const getTasks = asyncHandler(async (req, res) => {
   const tasks = await Task.find({ userId: req.user.id });
-  res.status(200).json({ isSuccess: true, data: tasks });
+  const filteredTasks = tasks.filter((task) =>
+    task.title.toLowerCase().includes(req.query.searchText.toLowerCase())
+  );
+  res.status(200).json(filteredTasks);
 });
 
 //@desc Get Specific task by id
 //@route GET /api/getTask/:id
 //@access private
 const getTask = asyncHandler(async (req, res) => {
-  const task = await Task.findById({ id: req.params.id });
+  const task = await Task.findById({ _id: req.params.id });
   if (!task) {
     res.status(404);
     throw new Error("Task not found");
   }
-  res.status(200).json({
-    isSuccess: true,
-    data: task,
-  });
+  res.status(200).json(task);
 });
 
 //@desc Create task
@@ -38,7 +38,6 @@ const createTask = asyncHandler(async (req, res) => {
   res.status(201).json({
     isSuccess: true,
     message: "Task created successfully",
-    data: newTask,
   });
 });
 
@@ -56,14 +55,13 @@ const updateTask = asyncHandler(async (req, res) => {
     throw new Error("User don't have permission to update others task");
   }
 
-  const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
+  await Task.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
 
   res.status(201).json({
-    success: true,
+    isSuccess: true,
     message: `Task updated successfully`,
-    data: updatedTask,
   });
 });
 

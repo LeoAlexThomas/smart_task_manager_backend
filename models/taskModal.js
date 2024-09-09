@@ -25,7 +25,7 @@ const taskSchema = mongoose.Schema(
       required: [true, "Please give location for task"],
     },
     isCompleted: {
-      type: String,
+      type: Boolean,
       required: [true, "Please check task completed or not"],
     },
     completedDate: { type: String, required: [false] },
