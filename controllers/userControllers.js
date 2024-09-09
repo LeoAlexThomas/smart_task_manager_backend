@@ -4,7 +4,7 @@ const lodash = require("lodash");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-// NOTE: Adding asyncHandler to handle try/catch method and if exception is thrown it will be caught and handled in error handler we added in index.js file
+// NOTE: Adding asyncHandler to handle try/catch method and if exception is thrown it will be caught and handled in error handler we added in /functions/api.js file
 
 //@desc Register new user
 //@route POST /api/user/register

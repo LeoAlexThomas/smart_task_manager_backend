@@ -1,8 +1,9 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
-const errorHandler = require("./middlewares/errorHandler");
-const connectDB = require("./config/connectDB");
+const errorHandler = require("../middlewares/errorHandler");
+const connectDB = require("../config/connectDB");
 const cors = require("cors");
+const Serverless = require("serverless-http");
 
 // NOTE: Initiate the connection to database
 connectDB();
@@ -20,8 +21,8 @@ app.use(express.json());
 app.use(cors());
 
 // To add api routes for our application
-app.use("/api", require("./routes/taskRoutes"));
-app.use("/api", require("./routes/userRoutes"));
+app.use("/.netlify/functions/api", require("../routes/taskRoutes"));
+app.use("/.netlify/functions/api", require("../routes/userRoutes"));
 
 // To add error handlers for structured error messages
 app.use(errorHandler);
@@ -29,3 +30,10 @@ app.use(errorHandler);
 app.listen(port, () => {
   console.log("listening on port " + port);
 });
+
+const handler = Serverless(app);
+
+module.exports.handler = async (event, context) => {
+  const result = await handler(event, context);
+  return result;
+};

@@ -2,11 +2,11 @@
   "name": "smart_task_manager_backend",
   "version": "1.0.0",
   "description": "This backend for smart task manager application",
-  "main": "index.js",
+  "main": "/backend/smart_task_manager_backend/functions/api.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node /functions/api.js",
+    "dev": "nodemon /functions/api.js"
   },
   "author": "Leo Alex Thomas",
   "license": "MIT",
@@ -18,7 +18,10 @@
     "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
-    "mongoose": "^8.6.0"
+    "mongoose": "^8.6.0",
+    "netlify-cli": "^17.35.0",
+    "netlify-lambda": "^2.0.16",
+    "serverless-http": "^3.2.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

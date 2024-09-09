@@ -1,16 +1,20 @@
 const lodash = require("lodash");
 const asyncHandler = require("express-async-handler");
 const Task = require("../models/taskModal");
-// NOTE: Adding asyncHandler to handle try/catch method and if exception is thrown it will be caught and handled in error handler we added in index.js file
+// NOTE: Adding asyncHandler to handle try/catch method and if exception is thrown it will be caught and handled in error handler we added in /functions/api.js file
 
 //@desc Get all tasks
 //@route GET /api/getTasks
 //@access private
 const getTasks = asyncHandler(async (req, res) => {
   const tasks = await Task.find({ userId: req.user.id });
-  const filteredTasks = tasks.filter((task) =>
-    task.title.toLowerCase().includes(req.query.searchText.toLowerCase())
-  );
+  const filteredTasks = tasks.filter((task) => {
+    const querySearch = req.query.searchText;
+    return (
+      lodash.isNil(querySearch) ||
+      task.title.toLowerCase().includes(querySearch.toLowerCase())
+    );
+  });
   res.status(200).json(filteredTasks);
 });
 
