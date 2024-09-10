@@ -66,10 +66,16 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("All Fields are required");
   }
 
-  const user = await User.findOne({ email });
-  if (lodash.isNil(user) || !(await bcrypt.compare(password, user.password))) {
+  const user = await User.findOne({ email }, { maxTimeMS: 60000 }); // NOTE: Max Timeout is 1 minute for this request
+  console.log("User Info: ", password, user);
+  if (lodash.isNil(user)) {
+    res.status(404);
+    throw new Error("Email is not registered");
+  }
+
+  if (!(await bcrypt.compare(password, user.password))) {
     res.status(401);
-    throw new Error("Email / password is incorrect");
+    throw new Error("Password is incorrect");
   }
 
   const accessToken = await getAccessToken({
