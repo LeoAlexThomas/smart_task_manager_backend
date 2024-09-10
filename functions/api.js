@@ -18,7 +18,11 @@ const port = process.env.PORT || 3002;
 app.use(express.json());
 
 // This middleware is to support CORS error handling
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://smart-tasks-manager.netlify.app",
+  })
+);
 
 // To add api routes for our application
 app.use("/.netlify/functions/api", require("../routes/taskRoutes"));
