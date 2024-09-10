@@ -66,7 +66,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("All Fields are required");
   }
 
-  const user = await User.findOne({ email }, { maxTimeMS: 60000 }); // NOTE: Max Timeout is 1 minute for this request
+  const user = await User.findOne({ email }); // NOTE: Max Timeout is 1 minute for this request
   console.log("User Info: ", password, user);
   if (lodash.isNil(user)) {
     res.status(404);
