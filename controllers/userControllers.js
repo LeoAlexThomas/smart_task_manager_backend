@@ -52,7 +52,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const getAccessToken = async (payload) => {
   return await jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET_KEY, {
-    expiresIn: "1d",
+    expiresIn: "30d",
   });
 };
 
@@ -67,7 +67,6 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findOne({ email }); // NOTE: Max Timeout is 1 minute for this request
-  console.log("User Info: ", password, user);
   if (lodash.isNil(user)) {
     res.status(404);
     throw new Error("Email is not registered");
