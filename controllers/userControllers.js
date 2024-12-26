@@ -103,4 +103,15 @@ const getCurrentUser = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { registerUser, loginUser, getCurrentUser };
+//@desc Get all user
+//@route GET /api/user/all
+//@access private
+const getAllUsers = asyncHandler(async (req, res) => {
+  const allUsers = await User.find();
+  res.status(200).json({
+    isSuccess: true,
+    data: allUsers,
+  });
+});
+
+module.exports = { registerUser, loginUser, getCurrentUser, getAllUsers };

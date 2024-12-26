@@ -4,6 +4,7 @@ const {
   getCurrentUser,
   registerUser,
   loginUser,
+  getAllUsers,
 } = require("../controllers/userControllers");
 const validateToken = require("../middlewares/validateToken");
 
@@ -14,5 +15,7 @@ router.route("/user/register").post(registerUser);
 router.route("/user/current").get(validateToken, getCurrentUser);
 
 router.route("/user/login").post(loginUser);
+
+router.route("/user/all").get(validateToken, getAllUsers);
 
 module.exports = router;

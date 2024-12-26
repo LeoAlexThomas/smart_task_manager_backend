@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
-const User = require("./userModal");
+const { v4: uuidV4 } = require("uuid");
 
 const ProjectSchema = mongoose.Schema(
   {
-    projectId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      unique: true,
+    id: {
+      type: String,
+      default: uuidV4(),
     },
     title: {
       type: String,
