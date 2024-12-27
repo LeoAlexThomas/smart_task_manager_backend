@@ -10,9 +10,9 @@ const jwt = require("jsonwebtoken");
 //@route POST /api/user/register
 //@access public
 const registerUser = asyncHandler(async (req, res) => {
-  const { userName, email, password } = req.body;
+  const { name, email, password } = req.body;
   if (
-    lodash.isEmpty(userName) ||
+    lodash.isEmpty(name) ||
     lodash.isEmpty(email) ||
     lodash.isEmpty(password)
   ) {
@@ -29,7 +29,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const createdUser = await User.create({
-    userName,
+    name,
     email,
     password: hashedPassword, // NOTE: Storing  hashed password instead of storing real password due user security issues
   });
@@ -43,7 +43,7 @@ const registerUser = asyncHandler(async (req, res) => {
     isSuccess: true,
     message: "Registered successfully",
     data: {
-      userName: createdUser.userName,
+      name: createdUser.name,
       email: createdUser.email,
       accessToken,
     },
@@ -97,7 +97,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
   res.status(200).json({
     isSuccess: true,
     data: {
-      userName: req.user.userName,
+      name: req.user.name,
       userEmail: req.user.email,
     },
   });
@@ -108,10 +108,16 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 //@access private
 const getAllUsers = asyncHandler(async (req, res) => {
   const allUsers = await User.find();
-  res.status(200).json({
-    isSuccess: true,
-    data: allUsers,
-  });
+  const { searchText } = req.query;
+  const { user: currentUser } = req;
+  const filteredUsers = allUsers.filter(
+    (user) =>
+      user.id !== currentUser.id &&
+      (lodash.isNil(searchText) ||
+        lodash.isEmpty(searchText) ||
+        user.name.includes(searchText))
+  );
+  res.status(200).json(filteredUsers);
 });
 
 module.exports = { registerUser, loginUser, getCurrentUser, getAllUsers };
