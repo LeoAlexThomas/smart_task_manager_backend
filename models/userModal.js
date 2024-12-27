@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema(
       type: String,
       default: uuidV4(),
     },
-    userName: {
+    name: {
       type: String,
       required: [true, "Please give user name"],
     },

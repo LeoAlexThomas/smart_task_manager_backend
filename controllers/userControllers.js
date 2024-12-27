@@ -108,10 +108,17 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 //@access private
 const getAllUsers = asyncHandler(async (req, res) => {
   const allUsers = await User.find();
-  res.status(200).json({
-    isSuccess: true,
-    data: allUsers,
-  });
+  const filteredUsers = allUsers.filter((user) =>
+    user.name.includes(req.query.searchText)
+  );
+  console.log("Filtered Users: ", filteredUsers);
+  res.status(200).json(
+    allUsers.map((user) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    }))
+  );
 });
 
 module.exports = { registerUser, loginUser, getCurrentUser, getAllUsers };

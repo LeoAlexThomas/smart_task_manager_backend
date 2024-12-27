@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { v4: uuidV4 } = require("uuid");
 
 const taskSchema = mongoose.Schema(
   {
@@ -6,6 +7,10 @@ const taskSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",
+    },
+    id: {
+      type: String,
+      default: uuidV4(),
     },
     title: { type: String, required: [true, "Please give title for task"] },
     description: {
