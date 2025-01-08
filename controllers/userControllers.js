@@ -115,7 +115,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
       user.id !== currentUser.id &&
       (lodash.isNil(searchText) ||
         lodash.isEmpty(searchText) ||
-        user.name.includes(searchText))
+        user.name.toLowerCase().includes(searchText.toLowerCase()))
   );
   res.status(200).json(filteredUsers);
 });
