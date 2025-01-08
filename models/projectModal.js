@@ -21,7 +21,6 @@ const ProjectSchema = mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Task",
-        required: [false],
       },
     ],
   },
@@ -29,5 +28,8 @@ const ProjectSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Add a default empty array to the tasks field
+ProjectSchema.path("tasks").default(() => []);
 
 module.exports = mongoose.model("Project", ProjectSchema);
