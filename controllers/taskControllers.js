@@ -1,10 +1,11 @@
 const lodash = require("lodash");
 const asyncHandler = require("express-async-handler");
 const Task = require("../models/taskModal");
+const Project = require("../models/projectModal");
 // NOTE: Adding asyncHandler to handle try/catch method and if exception is thrown it will be caught and handled in error handler we added in /functions/api.js file
 
 //@desc Get all tasks
-//@route GET /api/getTasks
+//@route GET /api/task/all/
 //@access private
 const getTasks = asyncHandler(async (req, res) => {
   const tasks = await Task.find({ userId: req.user.id });
@@ -19,7 +20,7 @@ const getTasks = asyncHandler(async (req, res) => {
 });
 
 //@desc Get Specific task by id
-//@route GET /api/getTask/:id
+//@route GET /api/task/:id/
 //@access private
 const getTask = asyncHandler(async (req, res) => {
   const task = await Task.findById({ _id: req.params.id });
@@ -31,22 +32,51 @@ const getTask = asyncHandler(async (req, res) => {
 });
 
 //@desc Create task
-//@route POST /api/createTask/
+//@route POST /api/task/create/
 //@access private
 const createTask = asyncHandler(async (req, res) => {
-  if (lodash.isEmpty(req.body)) {
+  const taskData = req.body;
+  if (lodash.isEmpty(taskData)) {
     res.status(400);
     throw new Error("All fields are required");
   }
-  const newTask = await Task.create({ ...req.body, userId: req.user.id });
-  res.status(201).json({
-    isSuccess: true,
-    message: "Task created successfully",
-  });
+  // const session = await mongoose.startSession();
+  // session.startTransaction();
+  const project = await Project.findById({ _id: taskData.projectId });
+  if (lodash.isNil(project)) {
+    res.status(400);
+    throw new Error("Project not found");
+  }
+  try {
+    const task = new Task({ ...taskData, ownerId: req.user.id });
+    await task.save();
+    // const savedTask = task.save({ session });
+    // await project.findByIdAndUpdate(
+    //   taskData.projectId,
+    //   { $push: { tasks: savedTask._id } },
+    //   { session }
+    // );
+
+    // await session.commitTransaction();
+    // session.endSession();
+    // const newTask = await Task.create({ ...taskData, ownerId: req.user.id });
+    project.tasks.push(task._id);
+    await project.save();
+
+    res.status(201).json({
+      isSuccess: true,
+      message: "Task created successfully",
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    res.status(400);
+    throw new Error(error);
+  }
 });
 
 //@desc Update specific task by id
-//@route PUT /api/updateTask/:id
+//@route PUT /api/task/update/:id/
 //@access private
 const updateTask = asyncHandler(async (req, res) => {
   const task = await Task.findById(req.params.id);
@@ -70,7 +100,7 @@ const updateTask = asyncHandler(async (req, res) => {
 });
 
 //@desc Delete specific task by id
-//@route DELETE /api/deleteTask/:id
+//@route DELETE /api/task/delete/:id/
 //@access private
 const deleteTask = asyncHandler(async (req, res) => {
   const task = await Task.findById(req.params.id);
