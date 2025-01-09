@@ -17,6 +17,11 @@ const ProjectSchema = mongoose.Schema(
         required: [true, "Please add a member to this project"],
       },
     ],
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "Please add a owner to this project"],
+    },
     tasks: [
       {
         type: mongoose.Schema.Types.ObjectId,
