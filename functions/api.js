@@ -20,7 +20,7 @@ app.use(express.json());
 // This middleware is to support CORS error handling
 app.use(
   cors({
-    origin: ["https://basic-expanses.netlify.app"],
+    origin: ["https://smart-tasks-manager.netlify.app"],
   })
 );
 
