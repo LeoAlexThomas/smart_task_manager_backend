@@ -6,6 +6,7 @@ const {
   createTask,
   updateTask,
   deleteTask,
+  getCategoryTasks,
 } = require("../controllers/taskControllers");
 const validateToken = require("../middlewares/validateToken");
 
@@ -13,14 +14,16 @@ const validateToken = require("../middlewares/validateToken");
 // router.use(validateToken);
 
 // 'router.route' => used to add route for our application api
-router.route("/createTask").post(validateToken, createTask);
+router.route("/task/create").post(validateToken, createTask);
 
-router.route("/getTasks").get(validateToken, getTasks);
+router.route("/task/all").get(validateToken, getTasks);
 
-router.route("/getTask/:id").get(validateToken, getTask);
+router.route("/task/:id").get(validateToken, getTask);
 
-router.route("/updateTask/:id").put(validateToken, updateTask);
+router.route("/task/status/:status").get(validateToken, getCategoryTasks);
 
-router.route("/deleteTask/:id").delete(validateToken, deleteTask);
+router.route("/task/update/:id").put(validateToken, updateTask);
+
+router.route("/task/delete/:id").delete(validateToken, deleteTask);
 
 module.exports = router;

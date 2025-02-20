@@ -20,13 +20,14 @@ app.use(express.json());
 // This middleware is to support CORS error handling
 app.use(
   cors({
-    origin: "https://smart-tasks-manager.netlify.app",
+    origin: ["https://smart-tasks-manager.netlify.app"],
   })
 );
 
 // To add api routes for our application
 app.use("/.netlify/functions/api", require("../routes/taskRoutes"));
 app.use("/.netlify/functions/api", require("../routes/userRoutes"));
+app.use("/.netlify/functions/api", require("../routes/projectRoutes"));
 
 // To add error handlers for structured error messages
 app.use(errorHandler);

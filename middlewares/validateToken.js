@@ -18,7 +18,10 @@ const validateToken = asyncHandler(async (req, res, next) => {
         res.status(401);
         throw new Error("User is not authorized");
       }
-      const user = await User.findOne({ email: data.userEmail });
+      const user = await User.findOne(
+        { email: data.userEmail },
+        { password: 0 }
+      );
       if (lodash.isNil(user)) {
         res.status(404);
         throw new Error("User not found");
