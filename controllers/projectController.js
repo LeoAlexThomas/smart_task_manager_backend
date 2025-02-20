@@ -17,11 +17,6 @@ const getProjects = asyncHandler(async (req, res) => {
 
     const currentProjects = projects.filter((project) => {
       return project.members.some((member) => {
-        console.log(
-          "User Ids: ",
-          member._id.toString(),
-          req.user._id.toString()
-        );
         return member._id.toString() === req.user._id.toString();
       });
     });

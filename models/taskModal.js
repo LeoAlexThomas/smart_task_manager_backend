@@ -17,14 +17,10 @@ const taskSchema = mongoose.Schema(
       enum: ["low", "medium", "high"],
       required: [true, "Please give priority level for task"],
     },
-    location: {
-      type: String,
-      required: [true, "Please give location for task"],
-    },
     status: {
       type: String,
-      enum: ["todo", "inProcess", "completed", "blocked"],
-      default: "todo",
+      enum: ["initial", "inProcess", "completed", "blocked"],
+      default: "initial",
     },
     isCompleted: {
       type: Boolean,

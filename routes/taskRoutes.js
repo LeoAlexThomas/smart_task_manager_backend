@@ -6,6 +6,7 @@ const {
   createTask,
   updateTask,
   deleteTask,
+  getCategoryTasks,
 } = require("../controllers/taskControllers");
 const validateToken = require("../middlewares/validateToken");
 
@@ -18,6 +19,8 @@ router.route("/task/create").post(validateToken, createTask);
 router.route("/task/all").get(validateToken, getTasks);
 
 router.route("/task/:id").get(validateToken, getTask);
+
+router.route("/task/status/:status").get(validateToken, getCategoryTasks);
 
 router.route("/task/update/:id").put(validateToken, updateTask);
 

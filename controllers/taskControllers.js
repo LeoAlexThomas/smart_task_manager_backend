@@ -41,6 +41,29 @@ const getTask = asyncHandler(async (req, res) => {
   }
 });
 
+//@desc Get Specific task by id
+//@route GET /api/task/:category/
+//@access private
+const getCategoryTasks = asyncHandler(async (req, res) => {
+  try {
+    const status = req.params.status;
+    const projectId = req.query.projectId;
+    if (status && projectId) {
+      const tasks = await Task.find({ status: status, projectId: projectId });
+      if (!tasks) {
+        res.status(404);
+        throw new Error("Task not found");
+      }
+      res.status(200).json(tasks);
+    }
+    res.status(400);
+    throw new Error("Status not found");
+  } catch (error) {
+    res.status(500);
+    throw new Error(error.message);
+  }
+});
+
 //@desc Create task
 //@route POST /api/task/create/
 //@access private
@@ -95,7 +118,7 @@ const updateTask = asyncHandler(async (req, res) => {
       res.status(404);
       throw new Error("Task not found");
     }
-    if (task.userId.toString() !== req.user._id.toString()) {
+    if (task.ownerId.toString() !== req.user._id.toString()) {
       res.status(403);
       throw new Error("User don't have permission to update others task");
     }
@@ -120,7 +143,7 @@ const updateTask = asyncHandler(async (req, res) => {
 const deleteTask = asyncHandler(async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
-    if (task.userId.toString() !== req.user._id.toString()) {
+    if (task.ownerId.toString() !== req.user._id.toString()) {
       res.status(403);
       throw new Error("User don't have permission to delete others task");
     }
@@ -134,4 +157,11 @@ const deleteTask = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getTasks, getTask, createTask, updateTask, deleteTask };
+module.exports = {
+  getTasks,
+  getTask,
+  getCategoryTasks,
+  createTask,
+  updateTask,
+  deleteTask,
+};
