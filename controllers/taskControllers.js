@@ -48,16 +48,16 @@ const getCategoryTasks = asyncHandler(async (req, res) => {
   try {
     const status = req.params.status;
     const projectId = req.query.projectId;
-    if (status && projectId) {
-      const tasks = await Task.find({ status: status, projectId: projectId });
-      if (!tasks) {
-        res.status(404);
-        throw new Error("Task not found");
-      }
-      res.status(200).json(tasks);
+    if (!status || !projectId) {
+      res.status(400);
+      throw new Error("Status not found");
     }
-    res.status(400);
-    throw new Error("Status not found");
+    const tasks = await Task.find({ status: status, projectId: projectId });
+    if (!tasks) {
+      res.status(404);
+      throw new Error("Task not found");
+    }
+    res.status(200).json(tasks);
   } catch (error) {
     res.status(500);
     throw new Error(error.message);
